@@ -167,15 +167,22 @@ class ADV_Recent_Posts_Widget extends WP_Widget{
 			<?php 
 			if($cposttype != '0')
 			{ 
-				$post_type_taxonomies = get_object_taxonomies($cposttype);
+				$post_type_taxonomies = get_object_taxonomies($cposttype,'objects');
 				if(count($post_type_taxonomies)>0)
 				{
 					$sel_tax = explode("-:-",$cposttaxonomies);
 					foreach ($post_type_taxonomies as $post_type_taxonomy ) {
-						$terms = get_terms( array('taxonomy' => $post_type_taxonomy,'hide_empty' => false) );
+
+						$terms = get_terms( array('taxonomy' => $post_type_taxonomy->name,'hide_empty' => false) );
+						$opts_group='';
 						foreach($terms as $term)
 					   	{
-					   		echo '<option value="' . esc_attr($post_type_taxonomy).':'.esc_attr($term->name). '" '.((in_array(esc_attr($post_type_taxonomy).':'.esc_attr($term->name) , $sel_tax))?'selected':'').'>' . esc_html__($post_type_taxonomy).': '.esc_html__($term->name) . '</option>';
+					   		$opts_group .= '<option value="' . esc_attr($post_type_taxonomy->name).':'.esc_attr($term->slug). '" '.((in_array(esc_attr($post_type_taxonomy->name).':'.esc_attr($term->slug) , $sel_tax))?'selected':'').'>' . esc_html__($term->name) . '</option>';
+					   	}
+
+					   	if(!empty($opts_group))
+					   	{
+					   		echo '<optgroup label="'.esc_html__($post_type_taxonomy->label).'">'.$opts_group.'</optgroup>';
 					   	}
 					}
 				}
